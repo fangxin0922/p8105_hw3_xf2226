@@ -162,13 +162,35 @@ In 2010, the states that were observed at 7 or more locations are `r pull(states
 
 ## Problem 2.2 Construct a dataset that is limited to Excellent responses, and contains, year, state, and a variable that averages the data_value across locations within a state. Make a “spaghetti” plot of this average value over time within a state (that is, make a plot showing a line for each state across years – the geom_line geometry and group aesthetic will help).
 ```{r}
-
+brfss %>% 
+  filter(response == "Excellent") %>% 
+  group_by(state, year) %>%  
+  mutate(
+    data_value_ave = mean(data_value, na.rm = TRUE)
+  ) %>% 
+  select(year, state, data_value_ave) %>% 
+  unique() %>% 
+  ggplot(
+    aes(x = year, y = data_value_ave, group = state, color = state)) + 
+  geom_line() + 
+  labs(
+    x = "Average Data Value"
+  )
 ```
 
 
 ## Problem 2.3 Make a two-panel plot showing, for the years 2006, and 2010, distribution of data_value for responses (“Poor” to “Excellent”) among locations in NY State.
 ```{r}
-
+brfss %>% 
+  filter(year == "2006" | year == "2010", state == "NY") %>% 
+  select(year, data_value, response) %>%
+  ggplot(
+    aes(x = data_value, color = response)) + 
+  geom_density() + 
+  facet_grid(.~ year) +
+  labs(
+    x = "Data Value"
+  )
 ```
 
 
