@@ -8,6 +8,7 @@ output: github_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(lubridate)
 library(p8105.datasets)
 
 theme_set(theme_minimal() + theme(legend.position = "bottom"))
@@ -29,8 +30,61 @@ knitr::opts_chunk$set(
   )
 ```
 
-```{r}
+# Problem 1 
+```{r, results = 'hide'}
+data("instacart")
+summary(instacart) #order_dow is in range 0-6; not very understandable
+instacart <- instacart %>% 
+    mutate(
+      order_dow = order_dow + 1,
+      order_dow = wday(order_dow, label = T)
+   ) 
+```
+## A short description of the dataset, noting the size and structure of the data, describing some key variables
+This instacart dataset contains `r nrow(instacart)` rows and `r ncol(instacart)` columns. 
 
+The observations are orders which is included in the `order_id` column. We have `r length(unique(pull(instacart, order_id)))` order in total. Within those orders, there are `r length(unique(pull(instacart, product_name)))` unique products. Some examples of the products include `r head(unique(pull(instacart, product_name)),5)`. Those products are coming from `r length(unique(pull(instacart, aisle_id)))` unique aisles and `r length(unique(pull(instacart, department)))` departments. The top two days of the week where the most orders are placed is `r tail(names(sort(table(pull(instacart,order_dow)))), 2)`, which are the weekends. 
+
+Some key varaibles are: 
+
+* `order_id`= order identifier
+* `product_id`= product identifier
+* `user_id`= customer identifier
+* `order_number`= the order sequence number for this user (1=first, n=nth)
+* `order_dow`= the day of the week on which the order was placed
+* `product_name`= name of the product
+* `aisle_id`= aisle identifier
+* `aisle`= the name of the aisle
+* `department_id`= department identifier
+* `department`= the name of the department
+
+## Illstrative examples of observations
+```{r}
+instacart_dow_dept <- instacart %>% 
+  filter(department == "produce" | department == "frozen") %>% 
+  group_by(order_dow, aisle, department) %>% 
+  summarise(total = n())
+
+instacart_dow_dept %>% 
+  ggplot(aes(x = order_dow, y = total, group = aisle, color = aisle)) + 
+  geom_line() +
+  facet_grid(department ~ ., scales = "free_y") +
+   labs(
+    x = "Day of the Week",
+    y = "Quantity of Orders",
+  )
 ```
 
+## Problem 1.1 How many aisles, and which are most items from?
+```{r}
+aisles <- instacart %>% 
+  count(aisle) %>% 
+  arrange(desc(n))
+```
+There are `r nrow(aisles)` number of aisles. The top 3 aisles where most items are ordered are from `r head(pull(aisles, aisle), 3)`
 
+## Problem 1.2 Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+
+## Problem 1.3 Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
+
+## Problem 1.4 Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
