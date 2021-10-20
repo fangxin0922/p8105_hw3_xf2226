@@ -193,4 +193,42 @@ brfss %>%
   )
 ```
 
+# Problem 3 
+## load and tidy accelerometer dataset
+```{r load and tidy accelerometer dataset}
+accel <- read_csv("./data/accel_data.csv") %>% 
+  janitor::clean_names() 
+
+summary(accel)
+
+accel_cleaned <- accel %>% 
+  pivot_longer(
+    cols = activity_1:activity_1440,
+    names_to = "activity_min", 
+    values_to = "activity_count"
+  ) %>% 
+  mutate(
+    activity_min = gsub("^.{0,9}", "", activity_min), 
+    day = as.factor(day), 
+    activity_min = as.numeric(activity_min), 
+    day_of_week = as.factor(ifelse(day %in% c("Saturday", "Sunday"), "weekend", "weekday"))
+  ) %>% 
+  select(week, day_id, day, day_of_week, activity_min, activity_count)
+```
+This cleaned accelerometer dataset contains `r nrow(accel_cleaned)` observations and `r ncol(accel_cleaned)` variables. 
+
+Some key varaibles are: 
+
+* `week`= week of the observation
+* `day_id`= day of the observation
+* `day`= day of the week of the observation
+* `activity_min`= min of the observation
+* `activity_count`= activity counts for each minute
+* `day_of_week`= what is weekday vs. weekend
+
+
+## Problem 3.1 Traditional analyses of accelerometer data focus on the total activity over the day. Using your tidied dataset, aggregate accross minutes to create a total activity variable for each day, and create a table showing these totals. Are any trends apparent?
+## Problem 3.2 Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
+
+
 
