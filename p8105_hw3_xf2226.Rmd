@@ -249,7 +249,7 @@ accel_cleaned %>%
   knitr::kable(digits = 1)
 ```
 
-I did not see any apparent trend. However, Saturday for week 4 and 5 have significantly less activity count compared to any other days of the study period. We need to look more in-depth about those two days and see if some serious measurement errors occurred 
+I did not see any apparent trend. However, Saturday for week 4 and 5 have significantly less activity count compared to any other days of the study period. We need to look more in-depth about those two days and see if some serious measurement errors occurred. 
 
 ## Problem 3.2 
 Accelerometer data allows the inspection activity over the course of the day. Make a single-panel plot that shows the 24-hour activity time courses for each day and use color to indicate day of the week. Describe in words any patterns or conclusions you can make based on this graph.
